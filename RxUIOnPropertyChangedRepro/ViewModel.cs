@@ -8,16 +8,18 @@ namespace RxUIOnPropertyChangedRepro
 {
     public class ViewModel : ReactiveObject
     {
-        string _goLabelText;
-        ICommand _invokeExceptionButtonCommand, _dontInvokeExceptionButtonCommand;
+        string _goLabelText = string.Empty;
 
-        public event EventHandler<bool> ActivityIndicatorStatusChanged;
+        public ViewModel()
+        {
+            InvokeExceptionButtonCommand = ReactiveCommand.CreateFromTask(() => ExecuteButtonCommand(true));
+            DontInvokeExceptionButtonCommand = ReactiveCommand.CreateFromTask(() => ExecuteButtonCommand(false));
+        }
 
-        public ICommand InvokeExceptionButtonCommand => _invokeExceptionButtonCommand ??
-            (_invokeExceptionButtonCommand = ReactiveCommand.CreateFromTask(async () => await ExecuteButtonCommand(true).ConfigureAwait(false)));
+        public event EventHandler<bool>? ActivityIndicatorStatusChanged;
 
-        public ICommand DontInvokeExceptionButtonCommand => _dontInvokeExceptionButtonCommand ??
-            (_dontInvokeExceptionButtonCommand = ReactiveCommand.CreateFromTask(async () => await ExecuteButtonCommand(false).ConfigureAwait(false)));
+        public ICommand InvokeExceptionButtonCommand { get; }
+        public ICommand DontInvokeExceptionButtonCommand { get; }
 
         public string GoLabelText
         {
@@ -31,12 +33,12 @@ namespace RxUIOnPropertyChangedRepro
 
             GoLabelText = "Background Task Running";
 
-            if(shouldInvokeException)
+            if (shouldInvokeException)
                 await Task.Delay(TimeSpan.FromSeconds(2)).ConfigureAwait(false);
             else
                 await Task.Delay(TimeSpan.FromSeconds(2));
-            
-            GoLabelText = null;
+
+            GoLabelText = string.Empty;
 
             OnActivityIndicatorStatusChanged(false);
         }

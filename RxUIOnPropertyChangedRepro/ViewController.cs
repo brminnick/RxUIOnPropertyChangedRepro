@@ -6,18 +6,18 @@ namespace RxUIOnPropertyChangedRepro
 {
     public partial class ViewController : ReactiveViewController, IViewFor<ViewModel>
     {
-        ViewModel _viewModel;
+        ViewModel? _viewModel;
 
-        public ViewModel ViewModel
+        public ViewModel? ViewModel
         {
             get => _viewModel;
             set => this.RaiseAndSetIfChanged(ref _viewModel, value);
         }
 
-        object IViewFor.ViewModel
+        object? IViewFor.ViewModel
         {
             get => ViewModel;
-            set => ViewModel = (ViewModel)value;
+            set => ViewModel = (ViewModel?)value;
         }
 
         protected ViewController(IntPtr handle) : base(handle)
